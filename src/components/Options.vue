@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div id="wrapper">
     <div
       :class="{ options: true, active: isDropdown }"
       @click="handleOpenDropdown"
@@ -16,12 +16,8 @@
       </svg>
     </div>
     <div v-if="isDropdown" class="dropdown">
-      <ul class="dropdown-list">
-        <li
-          v-for="location in data"
-          :key="location.id"
-          class="dropdown-list__item"
-        >
+      <ul class="list">
+        <li v-for="location in data" :key="location.id" class="list-item">
           <label :for="location.id">
             <input
               :id="location.id"
@@ -29,7 +25,16 @@
               :value="location"
               v-model="selectedLocations"
             />
-            <FontAwesome icon="check" />
+            <img
+              class="list-item__uncheckedmarkimg"
+              src="../assets/img/uncheckedmark.png"
+              alt="unchecked"
+            />
+            <img
+              class="list-item__checkedmarkimg"
+              src="../assets/img/checkedmark.png"
+              alt="checked"
+            />
             <span>
               {{ location.name }}
             </span>
@@ -84,6 +89,11 @@ export default {
         this.isBtnActive = false;
       }
     },
+    isDropdown(isDropdown) {
+      if (isDropdown) {
+        document.addEventListener("click", this.handleCloseIfClickOutside);
+      }
+    },
   },
   methods: {
     handleOpenDropdown() {
@@ -104,6 +114,14 @@ export default {
       );
       this.selectedLocations.splice(index, 1);
       this.acceptedLocations = [...this.selectedLocations];
+    },
+    handleCloseIfClickOutside(e) {
+      if (!document.getElementById("wrapper").contains(e.target)) {
+        this.isDropdown = false;
+        this.selectedLocations = this.acceptedLocations;
+
+        removeEventListener("click", this.handleCloseIfClickOutside);
+      }
     },
   },
 };
@@ -138,11 +156,11 @@ export default {
   padding: 8px 0 16px;
   user-select: none;
 
-  &-list {
+  .list {
     height: 270px;
     overflow-y: auto;
 
-    &__item {
+    &-item {
       display: flex;
       align-items: center;
       width: 100%;
@@ -157,6 +175,18 @@ export default {
         padding: 11px 0px 11px 19px;
       }
 
+      input[type="checkbox"] {
+        appearance: none;
+      }
+
+      input[type="checkbox"]:checked ~ .list-item__checkedmarkimg {
+        display: block;
+      }
+
+      input[type="checkbox"]:checked ~ .list-item__uncheckedmarkimg {
+        display: none;
+      }
+
       &:hover {
         background-color: #e7f1fd;
       }
@@ -165,17 +195,7 @@ export default {
         margin-left: 12px;
       }
 
-      img {
-        height: 24px;
-        width: 24px;
-      }
-
-      svg {
-        position: absolute;
-        top: 15px;
-        left: 22px;
-        font-size: 14px;
-        color: #fff;
+      &__checkedmarkimg {
         display: none;
       }
     }
@@ -216,22 +236,5 @@ export default {
       height: 24px;
     }
   }
-}
-
-input[type="checkbox"] {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 1px solid #000;
-  border-radius: 3px;
-}
-
-input[type="checkbox"]:checked {
-  background-color: #45d1c9;
-  border: 1px solid #45d1c9;
-}
-
-input[type="checkbox"]:checked ~ svg {
-  display: block;
 }
 </style>
