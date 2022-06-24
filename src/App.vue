@@ -15,14 +15,27 @@ export default {
         { id: 7, name: "Quảng Bình" },
         { id: 8, name: "Quảng Trị" },
       ],
+      acceptedLocations: [],
     };
+  },
+  methods: {
+    setAcceptedLocations(acceptedLocations) {
+      this.acceptedLocations = [...acceptedLocations];
+    },
+    updateAcceptedLocations(updatedLocations) {
+      this.acceptedLocations = [...updatedLocations];
+    },
   },
 };
 </script>
 
 <template>
   <div class="container">
-    <Options :data="locations" />
+    <Options
+      :data="locations"
+      @set-accepted-locations="setAcceptedLocations"
+      @update-accepted-locations="updateAcceptedLocations"
+    />
   </div>
 </template>
 
